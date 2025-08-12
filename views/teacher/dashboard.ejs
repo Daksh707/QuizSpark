@@ -1,0 +1,224 @@
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-1">Teacher Dashboard</h1>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-user me-1"></i>Welcome back, <%= user.name %>
+                    </p>
+                </div>
+                <div>
+                    <a href="/teacher/create-quiz" class="btn btn-primary btn-lg" data-testid="button-create-quiz">
+                        <i class="fas fa-plus-circle me-2"></i>Create New Quiz
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clipboard-list text-primary fa-3x mb-2"></i>
+                    <h3 class="card-title" data-testid="text-total-quizzes"><%= stats.total_quizzes || 0 %></h3>
+                    <p class="card-text text-muted">Total Quizzes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-play-circle text-success fa-3x mb-2"></i>
+                    <h3 class="card-title" data-testid="text-active-quizzes"><%= stats.active_quizzes || 0 %></h3>
+                    <p class="card-text text-muted">Active Quizzes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users text-info fa-3x mb-2"></i>
+                    <h3 class="card-title" data-testid="text-total-attempts"><%= stats.total_attempts || 0 %></h3>
+                    <p class="card-text text-muted">Total Attempts</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line text-warning fa-3x mb-2"></i>
+                    <h3 class="card-title" data-testid="text-avg-score"><%= stats.avg_score || 0 %>%</h3>
+                    <p class="card-text text-muted">Average Score</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" data-testid="text-success">
+            <i class="fas fa-check-circle me-2"></i><%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" data-testid="text-error">
+            <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- Quizzes List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Your Quizzes
+                    </h5>
+                    <span class="badge bg-primary" data-testid="text-quiz-count">
+                        <%= quizzes.length %> quiz<%= quizzes.length !== 1 ? 'es' : '' %>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <% if (quizzes.length === 0) { %>
+                        <div class="text-center py-5">
+                            <i class="fas fa-clipboard-list text-muted fa-4x mb-3"></i>
+                            <h4 class="text-muted">No Quizzes Created Yet</h4>
+                            <p class="text-muted mb-4">Create your first quiz to get started with QuizMaster</p>
+                            <a href="/teacher/create-quiz" class="btn btn-primary" data-testid="button-create-first-quiz">
+                                <i class="fas fa-plus-circle me-2"></i>Create Your First Quiz
+                            </a>
+                        </div>
+                    <% } else { %>
+                        <div class="row">
+                            <% quizzes.forEach((quiz, index) => { %>
+                                <div class="col-lg-6 mb-3">
+                                    <div class="card quiz-card h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h5 class="card-title" data-testid="text-quiz-title-<%= index %>">
+                                                    <%= quiz.title %>
+                                                </h5>
+                                                <span class="badge <%= quiz.is_active ? 'bg-success' : 'bg-secondary' %>" 
+                                                      data-testid="text-quiz-status-<%= index %>">
+                                                    <i class="fas <%= quiz.is_active ? 'fa-play' : 'fa-pause' %> me-1"></i>
+                                                    <%= quiz.is_active ? 'Active' : 'Inactive' %>
+                                                </span>
+                                            </div>
+                                            
+                                            <p class="card-text text-muted mb-3">
+                                                <%= quiz.description || 'No description provided' %>
+                                            </p>
+                                            
+                                            <div class="row text-center mb-3">
+                                                <div class="col-4">
+                                                    <small class="text-muted">Duration</small>
+                                                    <div data-testid="text-quiz-duration-<%= index %>">
+                                                        <i class="fas fa-clock me-1"></i><%= quiz.duration %> min
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <small class="text-muted">Questions</small>
+                                                    <div data-testid="text-quiz-questions-<%= index %>">
+                                                        <i class="fas fa-question-circle me-1"></i><%= quiz.question_count || 0 %>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <small class="text-muted">Attempts</small>
+                                                    <div data-testid="text-quiz-attempts-<%= index %>">
+                                                        <i class="fas fa-users me-1"></i><%= quiz.total_attempts || 0 %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="d-flex gap-2">
+                                                <a href="/teacher/quiz/<%= quiz.id %>" 
+                                                   class="btn btn-primary btn-sm flex-fill" 
+                                                   data-testid="button-manage-<%= index %>">
+                                                    <i class="fas fa-cog me-1"></i>Manage
+                                                </a>
+                                                
+                                                <% if (quiz.is_active) { %>
+                                                    <a href="/teacher/quiz/<%= quiz.id %>/leaderboard" 
+                                                       class="btn btn-success btn-sm flex-fill pulse" 
+                                                       data-testid="button-leaderboard-<%= index %>">
+                                                        <i class="fas fa-trophy me-1"></i>Live Board
+                                                    </a>
+                                                <% } else { %>
+                                                    <button class="btn btn-outline-secondary btn-sm flex-fill" disabled>
+                                                        <i class="fas fa-trophy me-1"></i>Live Board
+                                                    </button>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="card-footer text-muted">
+                                            <small>
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                Created: <%= new Date(quiz.created_at).toLocaleDateString() %>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <a href="/teacher/create-quiz" class="btn btn-outline-primary w-100" data-testid="button-quick-create">
+                                <i class="fas fa-plus-circle me-2"></i>Create New Quiz
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <button class="btn btn-outline-info w-100" onclick="viewAllAttempts()" data-testid="button-view-attempts">
+                                <i class="fas fa-chart-bar me-2"></i>View All Attempts
+                            </button>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <button class="btn btn-outline-success w-100" onclick="exportData()" data-testid="button-export-data">
+                                <i class="fas fa-download me-2"></i>Export Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewAllAttempts() {
+    alert('Feature coming soon: View comprehensive analytics of all quiz attempts');
+}
+
+function exportData() {
+    alert('Feature coming soon: Export quiz results and analytics to CSV/PDF');
+}
+
+// Auto refresh stats every 30 seconds if there are active quizzes
+<% if (stats.active_quizzes > 0) { %>
+    setInterval(() => {
+        location.reload();
+    }, 30000);
+<% } %>
+</script>

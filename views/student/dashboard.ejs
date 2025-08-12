@@ -1,0 +1,250 @@
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-1">Student Dashboard</h1>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-user me-1"></i>Welcome back, <%= user.name %>
+                    </p>
+                </div>
+                <div>
+                    <a href="/student/history" class="btn btn-outline-primary" data-testid="button-view-history">
+                        <i class="fas fa-history me-2"></i>View History
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clipboard-list text-primary fa-3x mb-2"></i>
+                    <h3 class="card-title" data-testid="text-total-attempts"><%= stats.total_attempts || 0 %></h3>
+                    <p class="card-text text-muted">Total Attempts</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle text-success fa-3x mb-2"></i>
+                    <h3 class="card-title" data-testid="text-completed-quizzes"><%= stats.completed_quizzes || 0 %></h3>
+                    <p class="card-text text-muted">Completed Quizzes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line text-warning fa-3x mb-2"></i>
+                    <h3 class="card-title" data-testid="text-avg-score"><%= stats.avg_score || 0 %>%</h3>
+                    <p class="card-text text-muted">Average Score</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" data-testid="text-success">
+            <i class="fas fa-check-circle me-2"></i><%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" data-testid="text-error">
+            <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- Available Quizzes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-play-circle me-2"></i>Available Quizzes
+                    </h5>
+                    <span class="badge bg-primary" data-testid="text-available-count">
+                        <%= quizzes.length %> available
+                    </span>
+                </div>
+                <div class="card-body">
+                    <% if (quizzes.length === 0) { %>
+                        <div class="text-center py-5">
+                            <i class="fas fa-clipboard-list text-muted fa-4x mb-3"></i>
+                            <h4 class="text-muted">No Quizzes Available</h4>
+                            <p class="text-muted mb-4">Check back later for new quizzes from your teachers</p>
+                        </div>
+                    <% } else { %>
+                        <div class="row">
+                            <% quizzes.forEach((quiz, index) => { %>
+                                <div class="col-lg-6 mb-3">
+                                    <div class="card quiz-card h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h5 class="card-title" data-testid="text-quiz-title-<%= index %>">
+                                                    <%= quiz.title %>
+                                                </h5>
+                                                <% if (quiz.completed_at) { %>
+                                                    <span class="badge bg-success" data-testid="status-completed-<%= index %>">
+                                                        <i class="fas fa-check me-1"></i>Completed
+                                                    </span>
+                                                <% } else if (quiz.started_at) { %>
+                                                    <span class="badge bg-warning" data-testid="status-in-progress-<%= index %>">
+                                                        <i class="fas fa-play me-1"></i>In Progress
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="badge bg-info" data-testid="status-available-<%= index %>">
+                                                        <i class="fas fa-clock me-1"></i>Available
+                                                    </span>
+                                                <% } %>
+                                            </div>
+                                            
+                                            <p class="card-text text-muted mb-2">
+                                                <%= quiz.description || 'No description provided' %>
+                                            </p>
+                                            
+                                            <div class="text-muted mb-3">
+                                                <small>
+                                                    <i class="fas fa-user-tie me-1"></i>
+                                                    Teacher: <%= quiz.teacher_name %> <%= quiz.teacher_lastname %>
+                                                </small>
+                                            </div>
+                                            
+                                            <div class="row text-center mb-3">
+                                                <div class="col-4">
+                                                    <small class="text-muted">Duration</small>
+                                                    <div data-testid="text-duration-<%= index %>">
+                                                        <i class="fas fa-clock me-1"></i><%= quiz.duration %> min
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <small class="text-muted">Questions</small>
+                                                    <div data-testid="text-questions-<%= index %>">
+                                                        <i class="fas fa-question-circle me-1"></i><%= quiz.question_count || 0 %>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <small class="text-muted">Your Score</small>
+                                                    <div data-testid="text-score-<%= index %>">
+                                                        <% if (quiz.completed_at && quiz.total_points > 0) { %>
+                                                            <i class="fas fa-star text-warning me-1"></i><%= Math.round((quiz.score / quiz.total_points) * 100) %>%
+                                                        <% } else { %>
+                                                            <i class="fas fa-minus me-1"></i>--
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="d-flex gap-2">
+                                                <% if (quiz.completed_at) { %>
+                                                    <a href="/student/quiz/<%= quiz.id %>/results?attempt=<%= quiz.attempt_id %>" 
+                                                       class="btn btn-success btn-sm flex-fill" 
+                                                       data-testid="button-view-results-<%= index %>">
+                                                        <i class="fas fa-trophy me-1"></i>View Results
+                                                    </a>
+                                                <% } else if (quiz.started_at) { %>
+                                                    <a href="/student/quiz/<%= quiz.id %>/take?attempt=<%= quiz.attempt_id %>" 
+                                                       class="btn btn-warning btn-sm flex-fill pulse" 
+                                                       data-testid="button-continue-<%= index %>">
+                                                        <i class="fas fa-play me-1"></i>Continue Quiz
+                                                    </a>
+                                                <% } else { %>
+                                                    <a href="/student/quiz/<%= quiz.id %>/start" 
+                                                       class="btn btn-primary btn-sm flex-fill" 
+                                                       data-testid="button-start-<%= index %>">
+                                                        <i class="fas fa-play-circle me-1"></i>Start Quiz
+                                                    </a>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <% if (stats.completed_quizzes > 0) { %>
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>Your Performance
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="mb-2">
+                                    <i class="fas fa-medal text-warning fa-2x"></i>
+                                </div>
+                                <h6>Best Performance</h6>
+                                <p class="text-muted">Coming Soon</p>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-2">
+                                    <i class="fas fa-trending-up text-success fa-2x"></i>
+                                </div>
+                                <h6>Improvement</h6>
+                                <p class="text-muted">Coming Soon</p>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-2">
+                                    <i class="fas fa-clock text-info fa-2x"></i>
+                                </div>
+                                <h6>Time Spent</h6>
+                                <p class="text-muted">Coming Soon</p>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-2">
+                                    <i class="fas fa-target text-primary fa-2x"></i>
+                                </div>
+                                <h6>Accuracy</h6>
+                                <p class="text-muted">Coming Soon</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<script>
+// Auto refresh available quizzes every 30 seconds
+setInterval(() => {
+    // Only refresh if no quiz is currently in progress
+    const inProgressBadges = document.querySelectorAll('[data-testid^="status-in-progress"]');
+    if (inProgressBadges.length === 0) {
+        location.reload();
+    }
+}, 30000);
+
+// Initialize socket connection for real-time updates
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof QuizMaster !== 'undefined') {
+        // Join student room for real-time notifications
+        const userId = '<%= user.id || "" %>';
+        if (userId) {
+            setTimeout(() => {
+                if (window.socket && window.socket.connected) {
+                    window.socket.emit('join-student-room', { userId });
+                }
+            }, 1000);
+        }
+    }
+});
+</script>
